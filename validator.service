@@ -1,0 +1,16 @@
+[Unit]
+Description=Safecoin Validator
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=15
+User=$USER
+LimitNOFILE=1000000
+Environment="PATH=/bin:/usr/bin"
+ExecStart=/home/$USER/Desktop/Safecoin-Validator-auto/start.sh
+
+[Install]
+WantedBy=multi-user.target
