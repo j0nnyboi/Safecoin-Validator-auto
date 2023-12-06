@@ -26,29 +26,33 @@ def build_safecoin():
 
 
 def Key_create():
-	os.system("mkdir ledger")
+	os.system("mkdir ~/home/$USER/ledger")
+	print("")
 	print("Creating validator identity keypair")
-	os.system("Safecoin/target/release/safecoin-keygen new --word-count 24 -o ledger/validator-identity.json")
-
+	time.sleep(2)
+	os.system("Safecoin/target/release/safecoin-keygen new --word-count 24 -o ~/home/$USER/ledger/validator-identity.json")
+        print("")
 	print("Creating vote account keypair")
-	os.system("Safecoin/target/release/safecoin-keygen new --word-count 24 -o ledger/validator-vote-account.json")
-	
+	time.sleep(2)
+	os.system("Safecoin/target/release/safecoin-keygen new --word-count 24 -o ~/home/$USER/ledger/validator-vote-account.json")
+	print("")
 	print("Creating  authorized withdrawer keypair")
-	os.system("Safecoin/target/release/safecoin-keygen new --word-count 24 -o ledger/authorized-withdrawer.json")
+	time.sleep(2)
+	os.system("Safecoin/target/release/safecoin-keygen new --word-count 24 -o ~/home/$USER/ledger/authorized-withdrawer.json")
 	
-	os.system("Safecoin/target/release/safecoin config set --keypair ledger/validator-identity.json")
+	os.system("Safecoin/target/release/safecoin config set --keypair ~/home/$USER/ledger/validator-identity.json")
 	
 	
 	os.system("Safecoin/target/release/safecoin address")
-	res = Get_User_Input("Please add some safe to this address, this is for your validator to vote, would recomend 50 safe, please type y once safe has been sent : ")
+	res = Get_User_Input("Please add some safe to this address, this is for your validator to vote, would recomend 50 safe, please type anything, once safe has been sent : ")
 	
-	time.sleep(5)
+	time.sleep(10)
 	
 	proc = subprocess.Popen(["Safecoin/target/release/safecoin balance"], stdout=subprocess.PIPE, shell=True)
 	(out, err) = proc.communicate()
 	print("balance : ", out)
 	if(int(out).decode() > 1):
-		os.system("Safecoin/target/release/safecoin create-vote-account ledger/validator-vote-account.json ledger/validator-identity.json ledger/authorized-withdrawer.json")
+		os.system("Safecoin/target/release/safecoin create-vote-account ~/home/$USER/ledger/validator-vote-account.json ~/home/$USER/ledger/validator-identity.json ~/home/$USER/ledger/authorized-withdrawer.json")
 		
 		print("adding auto start service")
 		os.system("sudo chmod +x ~/start.sh")
@@ -85,7 +89,7 @@ elif(res == "n" or res == "N"):
                 os.system("sudo systemctl restart validator")
                 time.sleep(5)
                 os.system("~/Safecoin/target/release/safecoin validators")
-                print("please check in above you validator is running") 
+                print("please check in above that you validator is running") 
                 
         elif(res == "n" or res == "N"):
                 print("Nothing left to do ending")
