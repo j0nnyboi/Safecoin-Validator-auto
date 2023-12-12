@@ -44,10 +44,14 @@ def Key_create():
 	
 	
 	os.system("Safecoin/target/release/safecoin address")
-	res = Get_User_Input("Please add some safe to this address, this is for your validator to vote, would recomend 50 safe, please type anything, once safe has been sent : ")
+	res = Get_User_Input("Please add some safe to this address, this is for your validator to vote, would recomend 50 safe, please type anything, once safe has been sent, or press n to force build with out safe : ")
+
+	if(res == "N" or res == "n"):
+                HasDeposit = False
+        else:
+                time.sleep(10)
+                HasDeposit = False
 	
-	time.sleep(10)
-	HasDeposit = False
 	while(HasDeposit == False):
                 try:
                         proc = subprocess.Popen(["Safecoin/target/release/safecoin balance"], stdout=subprocess.PIPE, shell=True)
@@ -58,8 +62,8 @@ def Key_create():
                         else:
                                 time.sleep(10)
                 except:
-                        print("safecoin chain connection issue")
                         time.sleep(10)
+                        print("safecoin chain connection issue") 
                         res = Get_User_Input("do you want to force setup with no connection to chain (y or n) : ")
                         if(res == "y" or res == "Y"):
                                 HasDeposit = True
