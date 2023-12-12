@@ -18,7 +18,7 @@ def New_install():
 	
 def Install_Cargo():
         os.system("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh")
-        #os.system("source '$HOME/.cargo/env'")
+        os.system("source '$HOME/.cargo/env'")
 
 
 def build_safecoin():
@@ -47,21 +47,47 @@ def Key_create():
 	res = Get_User_Input("Please add some safe to this address, this is for your validator to vote, would recomend 50 safe, please type anything, once safe has been sent : ")
 	
 	time.sleep(10)
+	HasDeposit = False
+	while(HasDeposit == False):
+                try:
+                        proc = subprocess.Popen(["Safecoin/target/release/safecoin balance"], stdout=subprocess.PIPE, shell=True)
+                        (out, err) = proc.communicate()
+                        print("balance : ", out)
+                        if(int(out).decode() > 1):
+                                HasDeposit = True
+                        else:
+                                time.sleep(10)
+                except:
+                        print("safecoin chain connection issue")
+                        time.sleep(10)
+                        res = Get_User_Input("do you want to force setup with no connection to chain (y or n) : ")
+                        if(res == "y" or res == "Y"):
+                                HasDeposit = True
+                                
+        os.system("Safecoin/target/release/safecoin create-vote-account ~/home/$USER/ledger/validator-vote-account.json ~/home/$USER/ledger/validator-identity.json ~/home/$USER/ledger/authorized-withdrawer.json")              
+        res = Get_User_Input("Setup full history  (y or n) : ")
+                if(res == "y" or res == "Y"):
+                        print("adding auto start service for Full history Validator")
+                        os.system("sudo cp fullstart.sh ~/start.sh")
+                        os.system("sudo chmod +x ~/start.sh")
+                        os.system("sudo cp validator.service /etc/systemd/system/validator.service")
+                        os.system("sudo systemctl enable --now validator")
+                        os.system("sudo systemctl start validator")
+                        print("auto start validator set and working")
+
+                else:
+                        print("adding auto start service for pruned Validator")
+                        os.system("sudo cp start.sh ~/start.sh")
+                        os.system("sudo chmod +x ~/start.sh")
+                        os.system("sudo cp validator.service /etc/systemd/system/validator.service")
+                        os.system("sudo systemctl enable --now validator")
+                        os.system("sudo systemctl start validator")
+                        print("auto start validator set and working")
+
+        
+                        
+                        
 	
-	proc = subprocess.Popen(["Safecoin/target/release/safecoin balance"], stdout=subprocess.PIPE, shell=True)
-	(out, err) = proc.communicate()
-	print("balance : ", out)
-	if(int(out).decode() > 1):
-		os.system("Safecoin/target/release/safecoin create-vote-account ~/home/$USER/ledger/validator-vote-account.json ~/home/$USER/ledger/validator-identity.json ~/home/$USER/ledger/authorized-withdrawer.json")
-		
-		print("adding auto start service")
-		os.system("sudo chmod +x ~/start.sh")
-		os.system("sudo cp validator.service /etc/systemd/system/validator.service")
-		os.system("sudo systemctl enable --now validator")
-		os.system("sudo systemctl start validator")
-		print("auto start validator set and working")
-
-
 res = Get_User_Input("New Validator (y or n) : ")
 
 if(res == "y" or res == "Y"):
