@@ -72,13 +72,17 @@ def Key_create():
         res = Get_User_Input("Setup full history  (y or n) : ")
                 if(res == "y" or res == "Y"):
                         print("adding auto start service for Full history Validator")
-                        os.system("sudo cp fullstart.sh ~/start.sh")
+                        os.system("sudo cp start.sh ~/start.sh")
                         os.system("sudo chmod +x ~/start.sh")
                         os.system("sudo cp validator.service /etc/systemd/system/validator.service")
                         os.system("sudo systemctl enable --now validator")
                         os.system("sudo systemctl start validator")
-                        print("auto start validator set and working")
-
+                        sleep(60)
+                        os.system("sudo systemctl stop validator")
+                        os.system("sudo cp fullstart.sh ~/start.sh")
+                        os.system("sudo chmod +x ~/start.sh")
+                        os.system("sudo systemctl start validator")
+                        
                 else:
                         print("adding auto start service for pruned Validator")
                         os.system("sudo cp start.sh ~/start.sh")
@@ -86,9 +90,9 @@ def Key_create():
                         os.system("sudo cp validator.service /etc/systemd/system/validator.service")
                         os.system("sudo systemctl enable --now validator")
                         os.system("sudo systemctl start validator")
-                        print("auto start validator set and working")
 
-        
+                print("auto start validator set and working, Please check https://onestopshop.ledamint.io/ or https://metrics.safegw.net:3000/ to make sure your validator is running corectly, can take 5 min to show")
+
                         
                         
 	
