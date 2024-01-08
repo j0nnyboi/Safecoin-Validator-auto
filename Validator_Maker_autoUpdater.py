@@ -50,26 +50,26 @@ def Key_create():
                 HasDeposit = False
         else:
                 time.sleep(10)
-                HasDeposit = False
+                HasDeposit = True
 	
-	while(HasDeposit == False):
-                try:
-                        proc = subprocess.Popen(["Safecoin/target/release/safecoin balance"], stdout=subprocess.PIPE, shell=True)
-                        (out, err) = proc.communicate()
-                        print("balance : ", out)
-                        if(int(out).decode() > 1):
-                                HasDeposit = True
-                        else:
+                while(HasDeposit == False):
+                        try:
+                                proc = subprocess.Popen(["Safecoin/target/release/safecoin balance"], stdout=subprocess.PIPE, shell=True)
+                                (out, err) = proc.communicate()
+                                print("balance : ", out)
+                                if(int(out).decode() > 1):
+                                        HasDeposit = True
+                                else:
+                                        time.sleep(10)
+                        except:
                                 time.sleep(10)
-                except:
-                        time.sleep(10)
-                        print("safecoin chain connection issue") 
-                        res = Get_User_Input("do you want to force setup with no connection to chain (y or n) : ")
-                        if(res == "y" or res == "Y"):
-                                HasDeposit = True
+                                print("safecoin chain connection issue") 
+                                res = Get_User_Input("do you want to force setup with no connection to chain (y or n) : ")
+                                if(res == "y" or res == "Y"):
+                                        HasDeposit = True
                                 
         os.system("Safecoin/target/release/safecoin create-vote-account ~/home/$USER/ledger/validator-vote-account.json ~/home/$USER/ledger/validator-identity.json ~/home/$USER/ledger/authorized-withdrawer.json")              
-        res = Get_User_Input("Setup full history  (y or n) : ")
+        res = Get_User_Input("Setup full history y or n for pruned : ")
                 if(res == "y" or res == "Y"):
                         print("adding auto start service for Full history Validator")
                         os.system("sudo cp start.sh ~/start.sh")
@@ -101,13 +101,17 @@ res = Get_User_Input("New Validator (y or n) : ")
 if(res == "y" or res == "Y"):
         #Setup new validator
         print("setting up New Validator, installing programs we uses")
+        time.sleep(5)
         New_install()
         print("Getting safecoin repo")
+        time.sleep(5)
         Git_Repo()
         print("installing safecoin")
+        time.sleep(5)
         Install_Cargo()
         build_safecoin()
         print("repo built, build your validator keys")
+        time.sleep(5)
         Key_create()
 
 
@@ -126,4 +130,6 @@ elif(res == "n" or res == "N"):
                 print("please check in above that you validator is running") 
                 
         elif(res == "n" or res == "N"):
-                print("Nothing left to do ending")
+                print("Nothing left to do, Finished")
+else:
+        print("Nothing to do, Finished")
